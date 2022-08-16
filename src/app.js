@@ -1,17 +1,18 @@
 import express from "express";
+import db from "./config/dbConnect.js";
+//importa o Model Livro, que contem o esquema da colação Livros
+import livros from "./models/Livro.js";
+
+//retorna a mensagem em caso de err
+db.on("error", console.log.bind(console, "Erro de Conexão"));
+
+//roda a conexão uma vez
+db.once("open", () => {
+  console.log("conexao feita com sucesso");
+});
 
 const app = express();
 app.use(express.json());
-const livros = [
-  {
-    id: 1,
-    titulo: "Senhor dos Aneis",
-  },
-  {
-    id: 2,
-    titulo: "O Hobbit",
-  },
-];
 
 //se a rota for localhost:3000
 app.get("/", (req, res) => {
@@ -20,7 +21,9 @@ app.get("/", (req, res) => {
 
 //se a rota for localhost:/livros, retorna um json
 app.get("/livros", (req, res) => {
-  res.status(200).json(livros);
+  livros.find((err, livros) => {
+    res.status(200).json(livros);
+  });
 });
 
 app.post("/livros", (req, res) => {
@@ -32,13 +35,13 @@ app.post("/livros", (req, res) => {
 app.put("/livros/:id", (req, res) => {
   let index = buscaLivros(req.params.id);
   livros[index].titulo = req.body.titulo;
-  res.json(livros).send('Livro atualizado com sucesso');
+  res.json(livros).send("Livro atualizado com sucesso");
 });
 
 app.delete("/livros/:id", (req, res) => {
   let index = buscaLivros(req.params.id);
-  livros.splice(index,1)
-  res.json(livros).send('Livro Excluído');
+  livros.splice(index, 1);
+  res.json(livros).send("Livro Excluído");
 });
 
 function buscaLivros(id) {
