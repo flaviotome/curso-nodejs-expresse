@@ -20,11 +20,6 @@ app.get("/", (req, res) => {
 });
 
 //se a rota for localhost:/livros, retorna um json
-app.get("/livros", (req, res) => {
-  livros.find((err, livros) => {
-    res.status(200).json(livros);
-  });
-});
 
 app.post("/livros", (req, res) => {
   livros.push(req.body);
